@@ -1,14 +1,20 @@
 <?php
 
-use App\Http\Middleware\EnsureTeamMembership;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::view('/', 'welcome')->name('home');
 
-Route::prefix('{current_team}')
-    ->middleware(['auth', 'verified', EnsureTeamMembership::class])
-    ->group(function () {
-        Route::view('dashboard', 'dashboard')->name('dashboard');
-    });
+Route::middleware(['auth', 'verified'])->group(function () {
+
+    Route::view('/dashboard', 'dashboard')
+        ->name('dashboard');
+
+    Route::get('/profile', [ProfileController::class, 'index'])
+        ->name('profile');
+
+    Route::post('/profile', [ProfileController::class, 'store'])
+        ->name('profile.store');
+});
 
 require __DIR__.'/settings.php';
